@@ -85,9 +85,7 @@ public class Conta implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Conta other = (Conta) obj;
-		return Objects.equals(agencia, other.agencia) && Objects.equals(id, other.id)
-				&& Objects.equals(numero, other.numero) && Objects.equals(saldo, other.saldo)
-				&& Objects.equals(titular, other.titular);
+		return Objects.equals(id, other.id);
 	}
 	
 	
