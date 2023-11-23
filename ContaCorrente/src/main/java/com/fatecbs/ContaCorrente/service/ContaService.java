@@ -1,57 +1,54 @@
 package com.fatecbs.ContaCorrente.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.fatecbs.ContaCorrente.model.Conta;
+import com.fatecbs.ContaCorrente.repository.ContaRepository;
 
 @Service
-public class ContaService {
-	private static List<Conta> contas = new ArrayList<>();
+public class ContaService implements 
+                         ServiceInterface<Conta> {
+   @Autowired
+   private ContaRepository repository;
 
-	public ContaService() {
-	}
+   public ContaService() {}
 
-	public void create(Conta conta) {
-		conta.setId(conta.generateId());
-		contas.add(conta);
-	}
+   @Override
+   public Conta create(Conta obj) {
+      repository.save(obj);
+      return obj;
+   }
 
-	public List<Conta> findAll() {
-		return contas;
-	}
+   @Override
+   public Conta findById(Long id) {
+      Optional<Conta> obj = repository.findById(id);
+      return obj.orElse(null);
+   }
+   
+   @Override
+   public List<Conta> findAll() { 
+      return repository.findAll(); 
+   }
 
-	public Conta find(Conta conta) {
-		for (Conta c : contas) {
-			if (c.equals(conta)) {
-				return c;
-			}
-		}
-		return null;
-	}
+   @Override
+   public boolean update(Conta obj) {
+      if (repository.existsById(obj.getId())) {
+         repository.save(obj);
+         return true;
+      }
+      return false;
+   }
 
-	public Conta find(Long id) {
-		return find(new Conta(id));
-	}
-
-	public boolean update(Conta conta) {
-		Conta _conta = find(conta);
-		if (_conta != null) {
-			_conta.setAgencia(conta.getAgencia());
-			_conta.setNumero(conta.getNumero());
-			_conta.setTitular(conta.getTitular());
-			_conta.setSaldo(conta.getSaldo());
-			return true;
-		}
-		return false;
-	}
-
-	public boolean delete(Long id) {
-		Conta _conta = find(id);
-		if (_conta != null) {
-			contas.remove(_conta);
-			return true;
-		}
-		return false;
-	}
+   @Override
+   public boolean delete(Long id) {
+      if (repository.existsById(id)) {
+         repository.deleteById(id);
+         return true;
+      }
+      return false;
+   }
 }

@@ -3,29 +3,36 @@ package com.fatecbs.ContaCorrente.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="tb_conta")
 public class Conta implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static Long nextId = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name="nr_agencia", nullable = false) 
     private Integer agencia;
+    @Column(name="nr_numero", length = 10, nullable = false) 
     private String numero;
+    @Column(name="nm_titular", length = 100, nullable = false) 
     private String titular;
+    @Column(name="vl_saldo") 
     private Float saldo;
 
     public Conta() { }
 
     public Conta(Long id) {  this.id = id; }
 
-    public Long generateId() {
-        return nextId++;
-    }
     // getters e setters
     // hashCode e equals
-
-	public static Long getNextId() {
-		return nextId;
-	}
 
 	public Long getId() {
 		return id;
