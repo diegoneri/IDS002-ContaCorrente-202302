@@ -1,57 +1,59 @@
 package com.fatecbs.ContaCorrente.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.fatecbs.ContaCorrente.model.Conta;
+import com.fatecbs.ContaCorrente.repository.ContaRepository;
 
 @Service
 public class ContaService {
-	private static List<Conta> contas = new ArrayList<>();
+	@Autowired
+	private ContaRepository repository;
 
 	public ContaService() {
 	}
 
 	public void create(Conta conta) {
-		conta.setId(conta.generateId());
-		contas.add(conta);
+		repository.save(conta);
 	}
 
 	public List<Conta> findAll() {
-		return contas;
+		return repository.findAll();
 	}
 
 	public Conta find(Conta conta) {
-		for (Conta c : contas) {
-			if (c.equals(conta)) {
-				return c;
-			}
-		}
-		return null;
+		Optional<Conta> _conta = 
+				repository.findById(conta.getId());
+		return _conta.orElse(null);
 	}
 
 	public Conta find(Long id) {
-		return find(new Conta(id));
+		Optional<Conta> _conta = 
+				repository.findById(id);
+		return _conta.orElse(null);		
 	}
 
 	public boolean update(Conta conta) {
-		Conta _conta = find(conta);
-		if (_conta != null) {
-			_conta.setAgencia(conta.getAgencia());
-			_conta.setNumero(conta.getNumero());
-			_conta.setTitular(conta.getTitular());
-			_conta.setSaldo(conta.getSaldo());
-			return true;
+		boolean existe = repository.existsById(conta.getId());
+		
+		if (existe) {
+			repository.save(conta);
 		}
-		return false;
+		
+		return existe;
 	}
 
 	public boolean delete(Long id) {
-		Conta _conta = find(id);
-		if (_conta != null) {
-			contas.remove(_conta);
-			return true;
+		boolean existe = repository.existsById(id);
+		
+		if (existe) {
+			repository.deleteById(id);
 		}
-		return false;
+		
+		return existe;
 	}
 }
